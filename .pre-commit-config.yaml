@@ -39,11 +39,10 @@ repos:
       # Run the formatter.
       - id: ruff-format
         args: [ --preview ]
-  - repo: local
+  - repo: https://github.com/allganize/ty-pre-commit
+    # Ty version.
+    rev: v0.0.43
     hooks:
-      - id: ty
-        name: ty
-        entry: pixi run ty check
-        language: system
-        types: [python]
-        pass_filenames: false
+      # Run the type checker.
+      - id: ty-check
+        types_or: [ python, pyi ]
