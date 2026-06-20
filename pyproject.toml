@@ -1,0 +1,145 @@
+[build-system]
+requires      = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name            = "python-github-template"
+version         = "0.1.0"
+description     = "GitHub template for Python projects"
+readme          = "README.md"
+license         = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.13"
+keywords = [
+    "python",
+    "cli",
+    "scaffold",
+    "template",
+    "github",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.scripts]
+mdscaffold = "python-project.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/python_project"]
+
+# ---------------------------------------------------------------------------
+# Ruff
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length    = 120
+target-version = "py313"
+src            = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "UP",       # pyupgrade
+    "B",        # flake8-bugbear
+    "C4",       # flake8-comprehensions
+    "SIM",      # flake8-simplify
+    "TCH",      # flake8-type-checking
+    "ANN",      # flake8-annotations
+    "D",        # pydocstyle
+    "N",        # pep8-naming
+    "RUF",      # ruff-specific
+]
+ignore = [
+    "D203",  # one-blank-line-before-class (conflicts with D211)
+    "D213",  # multi-line-summary-second-line (conflicts with D212)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "D"]
+
+# ---------------------------------------------------------------------------
+# basedpyright
+# ---------------------------------------------------------------------------
+[tool.basedpyright]
+pythonVersion          = "3.13"
+typeCheckingMode       = "standard"
+reportMissingImports   = true
+reportMissingTypeStubs = false
+include                = ["src", "tests"]
+strict                 = ["src"]
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths    = ["tests"]
+addopts      = "-v --tb=short --strict-markers"
+markers      = [
+    "integration: tests that touch the filesystem",
+    "slow: tests that take more than a second",
+]
+
+# ---------------------------------------------------------------------------
+# coverage
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+source   = ["python-project"]
+branch   = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
+# ---------------------------------------------------------------------------
+# typeguard rules
+# ---------------------------------------------------------------------------
+[tool.typeguard]
+collection-check-strategy = "ALL_ITEMS"
+
+# ---------------------------------------------------------------------------
+# hypothesis rules
+# ---------------------------------------------------------------------------
+[tool.hypothesis]
+max_examples = 40
+deadline = 500
+
+[tool.hypothesis.profiles.nightly]
+max_examples = 200
+deadline = 1200
+
+# ---------------------------------------------------------------------------
+# ty rules
+# ---------------------------------------------------------------------------
+[tool.ty.environment]
+# CRITICAL: Point ty to your pixi-generated environment so it can resolve imports
+python = ".pixi/envs/dev"
+# Target platform settings (specializes `sys.platform` checks)
+python-platform = "all" # options: win32, darwin, linux, or "all"
+
+# Optional: exclude directories you don't want type-checked
+[tool.ty.src]
+exclude = [
+    "**/.pixi/",
+]
+
+[tool.ty.rules]
+# Customize rule severities according to your team's tolerance.
+# Options per rule are "error", "warn", or "ignore".
+invalid-argument-type = "error"
+invalid-return-type = "error"
+unresolved-import = "error"
