@@ -1,8 +1,8 @@
-# python-project
+# mdscaffold
 
 > ⚠️ This project is in early development. APIs and CLI commands may change without notice.
 
-`python-project` is a command-line tool for scaffolding molecular dynamics (MD) simulation projects. It automates the creation of standardised directory structures and generates input files for the [Amber](https://ambermd.org/) MD package, along with documentation stubs for each stage of a simulation workflow.
+`mdscaffold` is a command-line tool for scaffolding molecular dynamics (MD) simulation projects. It automates the creation of standardised directory structures and generates input files for the [Amber](https://ambermd.org/) MD package, along with documentation stubs for each stage of a simulation workflow.
 
 ---
 
@@ -25,11 +25,11 @@
 
 ## Installation
 
-`python-project` is not yet published to PyPI. Install directly from source:
+`mdscaffold` is not yet published to PyPI. Install directly from source:
 
 ```bash
-git clone https://github.com/tclick/python-project.git
-cd python-project
+git clone https://github.com/tclick/mdscaffold.git
+cd mdscaffold
 pip install -e .
 ```
 
@@ -39,13 +39,13 @@ pip install -e .
 
 ```bash
 # Show available subcommands
-python-project --help
+mdscaffold --help
 
 # Scaffold a new simulation project directory
-python-project scaffold --name my_simulation
+mdscaffold scaffold --name my_simulation
 
 # Write Amber input scripts into an existing project
-python-project amber write-inputs --project ./my_simulation
+mdscaffold amber write-inputs --project ./my_simulation
 ```
 
 > Command names and options are subject to change during early development.
@@ -78,4 +78,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for notes on working with the codebase.
 
 ## License
 
-`python-project` is free software released under the [GNU General Public License v3.0](LICENSE). You are free to use, modify, and distribute it under the same terms.
+`mdscaffold` is free software released under the [GNU General Public License v3.0](LICENSE). You are free to use, modify, and distribute it under the same terms.
