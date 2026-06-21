@@ -39,11 +39,7 @@ repos:
       # Run the formatter.
       - id: ruff-format
         args: [ --preview ]
-  - repo: local
+  - repo: https://github.com/DetachHead/basedpyright-pre-commit-mirror
+    rev: v1.13.0 # or whatever the latest version is at the time
     hooks:
-      - id: ty
-        name: ty
-        entry: pixi run ty check
-        language: system
-        types: [python]
-        pass_filenames: false
+        - id: basedpyright
