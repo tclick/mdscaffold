@@ -144,3 +144,10 @@ exclude = [
 invalid-argument-type = "error"
 invalid-return-type = "error"
 unresolved-import = "error"
+
+[tool.bandit]
+exclude_dirs = ["build","dist","tests","scripts"]
+number = 4
+recursive = true
+skips = ["B404", "B603"]
+targets = "src"
