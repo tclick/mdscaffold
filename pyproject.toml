@@ -113,29 +113,25 @@ convention = "numpy"
 # basedpyright
 # ---------------------------------------------------------------------------
 [tool.basedpyright]
-# Lock the environment target to Python 3.13
 pythonVersion = "3.13"
-
-# 1. Set the global default behavior to strict
-typeCheckingMode = "strict"
 include = ["src", "tests"]
 
-# 2. Downgrade your test directory to standard to keep testing frictionless
-# This prevents you from needing to type-hint every single pytest fixture or mock
-overrideConfigWorkspaceRoot = true
-[tool.basedpyright.overrides]
-include = ["tests"]
+# 1. Set global baseline to standard (perfect for keeping tests happy)
 typeCheckingMode = "standard"
 
-# 3. Handle Dependency Graph Visibility
-# Keeps external library checks clean, especially if third-party tools lack formal type stubs
+# 2. Global path configurations
 reportMissingImports = true
 reportMissingTypeStubs = false
 
-# 4. Explicit Quality-of-Life Adjustments for CLI/Pydantic Apps
-# Stops Basedpyright from complaining if you don't type-hint explicit external library return types
+# 3. Manually toggle strict diagnostics on for your code base
+# By default, these flags will apply to everything.
 reportUnknownMemberType = false
 reportUnknownArgumentType = false
+
+# 4. Target your src folder explicitly for strict rule checking
+# This forces the rule checks onto src/ without breaking execution environment schemas.
+[[tool.basedpyright.executionEnvironments]]
+root = "src"
 
 # ---------------------------------------------------------------------------
 # pytest
