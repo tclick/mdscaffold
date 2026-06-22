@@ -49,7 +49,7 @@ biopython = ">=1.87,<2"
 loguru = ">=0.7.3,<0.8"
 pixi-pycharm = ">=0.0.11,<0.0.12"
 pydantic = ">=2.13.4,<3"
-pydantic-settings = ">=2.14.1,<3"
+pydantic-settings = ">=2.14.2,<3"
 python = ">=3.14.6,<3.15"
 pyyaml = ">=6.0.3,<7"
 rich = ">=15.0.0,<16"
@@ -72,14 +72,14 @@ clear-cache = "rm -rf .pytest_cache .ruff_cache site/ build/"
 # --- DEVELOPMENT FEATURE ---
 [feature.dev.dependencies]
 basedpyright = ">=1.39.8,<2"
+black = ">=26.5.1,<27"
 pre-commit = ">=4.6.0,<5"
-ruff = ">=0.15.17,<0.16"
-ty = ">=0.0.49,<0.0.50"
-vulture = ">=2.16,<3"
+pre-commit-hooks = ">=5.0.0,<6"
+ruff = ">=0.15.18,<0.16"
 
 [feature.dev.tasks]
-lint     = "ruff check src tests"
-fmt      = "ruff format src tests"
+lint-fix = "ruff check --fix src tests"
+fmt = { cmd = "black src tests", depends-on = ["lint-fix"] }
 types    = "basedpyright src"
 
 # Base type-checking command
@@ -94,12 +94,12 @@ type-baseline = "ty check src/ --add-ignore"
 
 # --- TEST FEATURE ---
 [feature.test.dependencies]
-hypothesis = ">=6.155.2,<7"
+hypothesis = ">=6.155.7,<7"
 nox = ">=2026.4.10,<2027"
-pytest = ">=9.0.3,<10"
+pytest = ">=9.1.1,<10"
 pytest-check = ">=2.8.0,<3"
 pytest-cov = ">=7.1.0,<8"
-pytest-github-actions-annotate-failures = ">=0.4.0,<0.5"
+pytest-github-actions-annotate-failures = ">=0.4.2,<0.5"
 pytest-loguru = ">=0.4.1,<0.5"
 pytest-xdist = ">=3.8.0,<4"
 typeguard = ">=4.5.2,<5"
@@ -121,7 +121,7 @@ test-clean = "nox -cw"
 [feature.docs.dependencies]
 mkdocs = ">=1.6.1,<2"
 mkdocs-material = ">=9.7.6,<10"
-mkdocstrings-python = ">=2.0.4,<3"  # Safely extracts your docstrings
+mkdocstrings-python = ">=2.0.5,<3"  # Safely extracts your docstrings
 
 [feature.docs.tasks]
 # 1. Local Development Server

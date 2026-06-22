@@ -36,6 +36,32 @@ mdscaffold = "mdscaffold.cli:app"
 packages = ["src/mdscaffold"]
 
 # ---------------------------------------------------------------------------
+# Black
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length    = 120
+target-version = "py313"
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+
+# ---------------------------------------------------------------------------
 # Ruff
 # ---------------------------------------------------------------------------
 [tool.ruff]
@@ -45,51 +71,78 @@ src            = ["src", "tests"]
 
 [tool.ruff.lint]
 select = [
-    "E", "W",   # pycodestyle
-    "F",        # pyflakes
-    "I",        # isort
-    "UP",       # pyupgrade
-    "B",        # flake8-bugbear
-    "C4",       # flake8-comprehensions
-    "SIM",      # flake8-simplify
-    "TCH",      # flake8-type-checking
-    "ANN",      # flake8-annotations
-    "D",        # pydocstyle
-    "N",        # pep8-naming
-    "RUF",      # ruff-specific
+    "E", "W",   # pycodestyle (style boundaries)
+    "F",        # pyflakes (invalid code syntax/unused imports)
+    "I",        # isort (clean, structured import grouping)
+    "UP",       # pyupgrade (automated modern python conventions)
+    "B",        # flake8-bugbear (runtime design flaws)
+    "C4",       # flake8-comprehensions (optimized loops and generation)
+    "SIM",      # flake8-simplify (collapses redundant nested conditions)
+    "TCH",      # flake8-type-checking (isolates typing imports)
+    "D",        # pydocstyle (strict NumPy docstring alignment)
+    "N",        # pep8-naming (casing consistency)
+    "NPY",      # NUMPY-SPECIFIC PERFORMANCE & DEPRECATION SAFETY
+    "RUF",      # ruff internal system checks
 ]
 ignore = [
-    "D203",  # one-blank-line-before-class (conflicts with D211)
-    "D213",  # multi-line-summary-second-line (conflicts with D212)
-]
+    # --- Formatting Disconnect Protections (Crucial for Black) ---
+    "E501",     # Line too long (Defer all word-wrapping choices to Black)
+    "E203",     # Whitespace before ':' (Black adds structural spacing here)
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
+    # --- Docstring Layout Rule Selection (Standard NumPy Selection) ---
+    "D203",     # 1 blank line before class (We prefer D211: no blank line before class)
+    "D213",     # Multi-line summary second line (We prefer D212: summary on line 1)
+
+    # --- Scientific/NumPy Optional Adjustments ---
+    "D100",     # Missing docstring in public module (Optional: turn off if file headers are tedious)
+    "D104",     # Missing docstring in public package (Prevents needing docstrings inside empty __init__.py files)]
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["ANN", "D"]
+# Protects your test suite from tedious documentation rules and security false-positives
+"tests/**" = [
+    "D",     # Missing/unformatted docstrings are completely fine in test suites
+    "S101",  # Allow standard 'assert' statements (suppresses Bandit security warnings)
+    "ARG001", # Allow unused function arguments (useful if using complex pytest fixtures)
+]
 
 # ---------------------------------------------------------------------------
 # basedpyright
 # ---------------------------------------------------------------------------
 [tool.basedpyright]
-pythonVersion          = "3.13"
-typeCheckingMode       = "standard"
-reportMissingImports   = true
+# Lock the environment target to Python 3.13
+pythonVersion = "3.13"
+
+# 1. Set the global default behavior to strict
+typeCheckingMode = "strict"
+include = ["src", "tests"]
+
+# 2. Downgrade your test directory to standard to keep testing frictionless
+# This prevents you from needing to type-hint every single pytest fixture or mock
+overrideConfigWorkspaceRoot = true
+[tool.basedpyright.overrides]
+include = ["tests"]
+typeCheckingMode = "standard"
+
+# 3. Handle Dependency Graph Visibility
+# Keeps external library checks clean, especially if third-party tools lack formal type stubs
+reportMissingImports = true
 reportMissingTypeStubs = false
-include                = ["src", "tests"]
-strict                 = ["src"]
+
+# 4. Explicit Quality-of-Life Adjustments for CLI/Pydantic Apps
+# Stops Basedpyright from complaining if you don't type-hint explicit external library return types
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
 
 # ---------------------------------------------------------------------------
 # pytest
 # ---------------------------------------------------------------------------
 [tool.pytest.ini_options]
 testpaths    = ["tests"]
-addopts      = "-v --tb=short --strict-markers"
+addopts      = "-v --tb=short --strict-markers --hypothesis-profile=default"
 markers      = [
     "integration: tests that touch the filesystem",
     "slow: tests that take more than a second",
@@ -99,12 +152,14 @@ markers      = [
 # coverage
 # ---------------------------------------------------------------------------
 [tool.coverage.run]
-source   = ["mdscaffold"]
+source   = ["src/mdscaffold"]
 branch   = true
 
 [tool.coverage.report]
 show_missing = true
 skip_covered = false
+# Fail the build if coverage drops below a healthy development threshold
+fail_under = 80
 
 # ---------------------------------------------------------------------------
 # typeguard rules
@@ -118,36 +173,3 @@ collection-check-strategy = "ALL_ITEMS"
 [tool.hypothesis]
 max_examples = 40
 deadline = 500
-
-[tool.hypothesis.profiles.nightly]
-max_examples = 200
-deadline = 1200
-
-# ---------------------------------------------------------------------------
-# ty rules
-# ---------------------------------------------------------------------------
-[tool.ty.environment]
-# CRITICAL: Point ty to your pixi-generated environment so it can resolve imports
-python = ".pixi/envs/dev"
-# Target platform settings (specializes `sys.platform` checks)
-python-platform = "all" # options: win32, darwin, linux, or "all"
-
-# Optional: exclude directories you don't want type-checked
-[tool.ty.src]
-exclude = [
-    "**/.pixi/",
-]
-
-[tool.ty.rules]
-# Customize rule severities according to your team's tolerance.
-# Options per rule are "error", "warn", or "ignore".
-invalid-argument-type = "error"
-invalid-return-type = "error"
-unresolved-import = "error"
-
-[tool.bandit]
-exclude_dirs = ["build","dist","tests","scripts"]
-number = 4
-recursive = true
-skips = ["B404", "B603"]
-targets = "src"
