@@ -40,7 +40,7 @@ packages = ["src/mdscaffold"]
 # ---------------------------------------------------------------------------
 [tool.black]
 line-length    = 120
-target-version = "py313"
+target-version = ["py313", "py314"]
 include = '\.pyi?$'
 exclude = '''
 (
