@@ -30,7 +30,7 @@ classifiers = [
 ]
 
 [project.scripts]
-mdscaffold = "mdscaffold.cli:app"
+mdscaffold = "mdscaffold.main:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mdscaffold"]
