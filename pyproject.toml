@@ -66,7 +66,7 @@ exclude = '''
 # ---------------------------------------------------------------------------
 [tool.ruff]
 line-length    = 120
-target-version = "py313"
+target-version = "py314"
 src            = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -113,7 +113,9 @@ convention = "numpy"
 # basedpyright
 # ---------------------------------------------------------------------------
 [tool.basedpyright]
-pythonVersion = "3.13"
+venvPath = ".pixi/envs"
+venv = "dev"
+pythonVersion = "3.14"
 include = ["src", "tests"]
 
 # 1. Set global baseline to standard (perfect for keeping tests happy)
