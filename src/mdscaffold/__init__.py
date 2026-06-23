@@ -50,5 +50,12 @@ Examples
 >>> build_complete_workspace(config)
 """
 
-__version__ = "0.1.0"
+import importlib.metadata
+
+try:
+    __version__ = importlib.metadata.version(distribution_name="mdscaffold")
+except importlib.metadata.PackageNotFoundError:
+    # Fallback default if package isn't installed in the active environment path
+    __version__ = "0.1.0-dev"
+
 # __all__ = ["commands", "config", "generators", "system"]

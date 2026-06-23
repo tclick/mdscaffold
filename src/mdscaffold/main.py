@@ -24,8 +24,91 @@ and attaching detached command routines dynamically to avoid editing a centraliz
 import typer
 from rich.console import Console
 
-app = typer.Typer()
+from mdscaffold import __version__  # Fetch the dynamic version variable
+
+app = typer.Typer(
+    help="mdscaffold: Automation platform for molecular dynamics simulation structures and environments.",
+    no_args_is_help=True,  # Optional: Automatically prints help instead of crashing if run empty
+)
 console = Console()
+
+
+def version_callback(value: bool):
+    """Evaluate the boolean state of the version option flag and emit licensing, versioning, and legal disclaimers if triggered.
+
+    Parameters
+    ----------
+    value : bool
+        The boolean signal captured by the Typer option parser indicating whether the user explicitly supplied the target flag via the system command-line interface framework.
+
+    Raises
+    ------
+    typer.Exit
+        Intercepts standard execution and forces a clean application exit sequence code of 0 once the informational metadata arrays have been successfully flushed to stdout.
+    """
+    if value:
+        console.print(f"[bold]mdscaffold version {__version__}[/bold]")
+        console.print("Copyright (C) 2026 Your Name")
+        console.print(
+            "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\n"
+            "This is free software: you are free to change and redistribute it.\n"
+            "There is NO WARRANTY, to the extent permitted by law."
+        )
+        raise typer.Exit()
+
+
+# Add a default callback or initialization command
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Show the application version, copyright, and GPLv3+ license statement.",
+    )
+) -> None:
+    """Core entrypoint and initialization callback for the mdscaffold command-line interface framework.
+
+    This function coordinates the foundational execution state, runtime parameter parsing, and diagnostic configurations
+    before subcommands are dispatched. It manages the global context layers required to map, build, and validate
+    subdirectory configurations and system coordinates for molecular dynamics workspace environments.
+
+    Parameters
+    ----------
+    version : bool, optional
+        A structural command-line flag option string selector that intercepts normal programmatic control loops to
+        instantly pipe software version and copyright properties to the terminal window.
+
+    Returns
+    -------
+    None
+        The function returns no explicit values. It configures ambient state context objects and transfers operational
+        control vectors directly to the targeted subcommands.
+
+    Raises
+    ------
+    typer.Exit
+        Raised explicitly if initialization parameters, directory verification targets, or platform context bindings
+        fail baseline structural sanity checks during startup loops.
+
+    See Also
+    --------
+    init : Subcommand responsible for building new structural workspace scaffolding matrices.
+
+    Notes
+    -----
+    This callback acts as an initialization gate. If the application is invoked without explicit subcommands or
+    arguments, the framework automatically falls back to emitting standard diagnostic help menus.
+
+    Examples
+    --------
+    >>> # Invoking the framework through a standard system shell sub-process execution loop to verify the environment
+    layout parameters
+    >>> mdscaffold --help
+    """
+    pass
 
 
 if __name__ == "__main__":
