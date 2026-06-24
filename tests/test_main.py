@@ -23,6 +23,9 @@ This module uses the Typer CliRunner matrix infrastructure to assert correct exi
 help menu parsing compliance, and dynamic version extraction behaviors from package configuration registries.
 """
 
+import subprocess
+import sys
+
 from typer.testing import CliRunner
 
 from mdscaffold import __version__
@@ -90,3 +93,29 @@ def test_cli_short_version_flag_output() -> None:
     result = runner.invoke(app, ["-v"])
     assert result.exit_code == 0
     assert f"mdscaffold version {__version__}" in result.stdout
+
+
+def test_version_callback_terminates_application() -> None:
+    """Assert that executing the short-form version option flag forces a clean execution termination state.
+
+    This test specifically satisfies the '49->exit' coverage gap by proving that the Typer runtime environment
+    intercepts the evaluation matrix and triggers an explicit, graceful exit code.
+    """
+    result = runner.invoke(app, ["-v"])
+    assert result.exit_code == 0
+    # Checking for text components from your triple-quoted GPL text license string ensures code path execution
+    assert "License GPLv3+" in result.output
+
+
+def test_main_module_dunder_execution_block(monkeypatch) -> None:
+    """Assert that the standard module execution guard invokes the root Typer entrypoint when evaluated as __main__.
+
+    This test covers line 109 and 113 by executing the script context in a clean, sandboxed subprocess loop,
+    ensuring that system binary triggers safely route to the baseline command graph.
+    """
+    # Execute the module script file directly using the active runtime environment executable path
+    cmd = [sys.executable, "-m", "mdscaffold.main", "--help"]
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+    assert result.returncode == 0
+    assert "mdscaffold:" in result.stdout
