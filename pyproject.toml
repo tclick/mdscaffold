@@ -50,6 +50,7 @@ exclude = '''
     | \.hg
     | \.mypy_cache
     | \.tox
+    | \.pixi
     | \.venv
     | _build
     | buck-out
