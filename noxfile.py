@@ -1,8 +1,8 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# fluctmatch
+# mdscaffold
 # Copyright (c) 2026 Timothy H. Click
 #
-# This file is part of fluctmatch.
+# This file is part of mdscaffold.
 #
 # Fluctmatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 # License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,7 +18,7 @@
 # Timothy H. Click, Nixon Raj, and Jhih-Wei Chu. Simulation. Meth Enzymology. 578 (2016), 327-342,
 # Calculation of Enzyme Fluctuograms from All-Atom Molecular Dynamics doi:10.1016/bs.mie.2016.05.024.
 # ---------------------------------------------------------------------------------------------------------------------
-"""Nox configuration file for automating development tasks for the `fluctmatch` project.
+"""Nox configuration file for automating development tasks for the `mdscaffold` project.
 
 This script defines sessions for:
 - Code formatting and linting (using ruff and pre-commit)
@@ -75,7 +75,7 @@ def lint(session: nox.Session) -> None:
     """
     session.log("--> Executing Ruff linter and formatter validation...")
     session.run("pixi", "run", "ruff", "check", ".", external=True)
-    session.run("pixi", "run", "ruff", "format", "--check", ".", external=True)
+    session.run("pixi", "run", "black", "--check", ".", external=True)
 
 
 @nox.session
@@ -95,7 +95,7 @@ def type_check(session: nox.Session) -> None:
     None
     """
     session.log("--> Initializing static type analysis engine...")
-    session.run("pixi", "run", "ty", "check", external=True)
+    session.run("pixi", "run", "basedpyright", external=True)
 
 
 @nox.session
@@ -118,7 +118,7 @@ def tests(session: nox.Session) -> None:
     session.log("--> Launching instrumented parallelized test execution engine...")
 
     # Typeguard target package configuration
-    target_package: Final[str] = "fluctmatch"
+    target_package: Final[str] = "mdscaffold"
 
     # Unified framework execution arguments
     args: Final[list[str]] = [

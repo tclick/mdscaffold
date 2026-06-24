@@ -82,16 +82,6 @@ lint-fix = "ruff check --fix src tests"
 fmt = { cmd = "black src tests", depends-on = ["lint-fix"] }
 types    = "basedpyright src"
 
-# Base type-checking command
-type-check = "ty check src/"
-
-# Continuous 'watch' mode for instantaneous feedback while coding
-type-watch = "ty check src/ --watch"
-
-# Baseline generator: If you are migrating a large codebase, run this once
-# to auto-insert ignore comments and clear existing backlogs.
-type-baseline = "ty check src/ --add-ignore"
-
 # --- TEST FEATURE ---
 [feature.test.dependencies]
 hypothesis = ">=6.155.7,<7"
